@@ -18,7 +18,7 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): Response
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
             'first_name' => ['required', 'string', 'max:100'],
@@ -61,6 +61,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return response()->setContent($user);
+        return response()->json($user);
     }
 }
