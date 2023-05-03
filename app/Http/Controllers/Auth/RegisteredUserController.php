@@ -3,22 +3,25 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class RegisteredUserController extends Controller
 {
     /**
      * Handle an incoming registration request.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
-    public function store(Request $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'first_name' => ['required', 'string', 'max:100'],
@@ -62,5 +65,21 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         return response()->json($user);
+    }
+
+    /**
+     * Handle an incoming registration request.
+     *
+     * @throws ValidationException
+     */
+    public function list(Request $request): JsonResponse
+    {
+        $request->validate([
+            'role_id' => ['int', 'max:3']
+        ]);
+
+        $users = User::all()->where('role_id', $request->role_id);
+
+        return response()->json($users);
     }
 }
